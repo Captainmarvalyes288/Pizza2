@@ -6,7 +6,7 @@ const PizzaItem = ({ pizza, addToCart }) => {
       <img src={pizza.imageUrl} alt={pizza.name} />
       <h3>{pizza.name}</h3>
       <p>{pizza.description}</p>
-      <p>Price: ${pizza.price}</p>
+      <p>Price: ${pizza.price.toFixed(2)}</p>
       <button onClick={() => addToCart(pizza)}>Add to Cart</button>
     </div>
   );

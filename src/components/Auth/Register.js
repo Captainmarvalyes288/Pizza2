@@ -5,13 +5,14 @@ import { register } from '../../services/auth';
 const Register = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [role, setRole] = useState('user');
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await register(email, password);
+      await register(email, password, role);
       navigate('/login');
     } catch (err) {
       setError(err.response?.data?.msg || 'An error occurred');
@@ -19,9 +20,9 @@ const Register = () => {
   };
 
   return (
-    <div>
+    <div className="container">
       <h2>Register</h2>
-      {error && <p>{error}</p>}
+      {error && <p className="error">{error}</p>}
       <form onSubmit={handleSubmit}>
         <input
           type="email"
@@ -37,9 +38,16 @@ const Register = () => {
           onChange={(e) => setPassword(e.target.value)}
           required
         />
+        <select
+          value={role}
+          onChange={(e) => setRole(e.target.value)}
+        >
+          <option value="user">User</option>
+          <option value="admin">Admin</option>
+        </select>
         <button type="submit">Register</button>
       </form>
-      <Link to="/login">Already have an account? Login</Link>
+      <p>Already have an account? <Link to="/login">Login</Link></p>
     </div>
   );
 };

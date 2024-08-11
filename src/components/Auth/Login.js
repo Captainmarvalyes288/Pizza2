@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { login } from '../../services/auth';
 import { AuthContext } from '../../contexts/AuthContext';
 
@@ -14,17 +14,17 @@ const Login = () => {
     e.preventDefault();
     try {
       const response = await login(email, password);
-      authLogin(response.data.token, response.data.user);
+      authLogin(response.token, response.user);
       navigate('/');
     } catch (err) {
-      setError(err.response?.data?.msg || 'An error occurred');
+      setError(err.response?.data?.message || 'An error occurred during login');
     }
   };
 
   return (
-    <div>
+    <div className="container">
       <h2>Login</h2>
-      {error && <p>{error}</p>}
+      {error && <p className="error">{error}</p>}
       <form onSubmit={handleSubmit}>
         <input
           type="email"
@@ -42,8 +42,6 @@ const Login = () => {
         />
         <button type="submit">Login</button>
       </form>
-      <Link to="/register">Don't have an account? Register</Link>
-      <Link to="/forgot-password">Forgot Password?</Link>
     </div>
   );
 };

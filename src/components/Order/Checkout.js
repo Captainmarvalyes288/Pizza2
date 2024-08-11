@@ -1,35 +1,25 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState} from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useCart } from '../../contexts/CartContext';
 import api from '../../services/api';
 
 const Checkout = () => {
-  const [cart, setCart] = useState([]);
-  const [total, setTotal] = useState(0);
   const [address, setAddress] = useState('');
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const storedCart = JSON.parse(localStorage.getItem('cart')) || [];
-    setCart(storedCart);
-    calculateTotal(storedCart);
-  }, []);
-
-  const calculateTotal = (cartItems) => {
-    const sum = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
-    setTotal(sum);
-  };
+  const { cart, getCartTotal, clearCart } = useCart();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const orderData = {
         pizzas: cart.map(item => ({ pizza: item._id, quantity: item.quantity })),
-        total,
+        total: getCartTotal(),
         address
       };
-      const response = await api.post('/payment/create-order', { amount: total * 100, currency: 'INR' });
+
+      const response = await api.post('/payment/create-order', { amount: getCartTotal() * 100, currency: 'INR' });
       const { order } = response.data;
-      
+
       const options = {
         key: process.env.REACT_APP_RAZORPAY_KEY_ID,
         amount: order.amount,
@@ -47,7 +37,7 @@ const Checkout = () => {
             };
             await api.post('/payment/verify-payment', paymentData);
             await api.post('/orders', orderData);
-            localStorage.removeItem('cart');
+            clearCart();
             navigate('/order-confirmation');
           } catch (error) {
             console.error('Error verifying payment:', error);
@@ -71,18 +61,18 @@ const Checkout = () => {
   };
 
   return (
-    <div>
+    <div className="checkout">
       <h2>Checkout</h2>
-      <div>
+      <div className="cart-summary">
         {cart.map((item) => (
           <div key={item._id}>
             <h3>{item.name}</h3>
             <p>Quantity: {item.quantity}</p>
-            <p>Price: ${item.price * item.quantity}</p>
+            <p>Price: ${(item.price * item.quantity).toFixed(2)}</p>
           </div>
         ))}
       </div>
-      <h3>Total: ${total.toFixed(2)}</h3>
+      <h3>Total: ${getCartTotal().toFixed(2)}</h3>
       <form onSubmit={handleSubmit}>
         <textarea
           placeholder="Delivery Address"

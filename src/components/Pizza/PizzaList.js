@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getAllPizzas } from '../../services/pizza';
+import { getAllPizzas } from '../../services/mockPizzaApi';
 import PizzaItem from './PizzaItem';
 import { useCart } from '../../contexts/CartContext';
 
@@ -13,8 +13,8 @@ const PizzaList = () => {
     const fetchPizzas = async () => {
       try {
         setLoading(true);
-        const response = await getAllPizzas();
-        setPizzas(response.data);
+        const fetchedPizzas = await getAllPizzas();
+        setPizzas(fetchedPizzas);
         setLoading(false);
       } catch (error) {
         console.error('Error fetching pizzas:', error);
@@ -29,7 +29,7 @@ const PizzaList = () => {
   if (error) return <div>{error}</div>;
 
   return (
-    <div>
+    <div className="pizza-list">
       <h2>Our Pizzas</h2>
       <div className="pizza-grid">
         {pizzas.map((pizza) => (

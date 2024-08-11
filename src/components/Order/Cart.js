@@ -15,15 +15,15 @@ const Cart = () => {
   }
 
   return (
-    <div>
+    <div className="cart">
       <h2>Your Cart</h2>
       {cart.map((item) => (
-        <div key={item._id}>
+        <div key={item._id} className="cart-item">
           <h3>{item.name}</h3>
-          <p>Price: ${item.price}</p>
-          <input 
-            type="number" 
-            value={item.quantity} 
+          <p>Price: ${item.price.toFixed(2)}</p>
+          <input
+            type="number"
+            value={item.quantity}
             onChange={(e) => updateQuantity(item._id, parseInt(e.target.value))}
             min="1"
           />
