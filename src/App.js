@@ -18,6 +18,7 @@ import Profile from './components/User/Profile';
 import AdminDashboard from './components/Admin/Dashboard';
 import PrivateRoute from './components/Common/PrivateRoute';
 import AdminRoute from './components/Common/AdminRoute';
+import VerifyEmail from './components/Auth/VerifyEmail';
 
 function App() {
   return (
@@ -33,6 +34,7 @@ function App() {
             <Route path="/reset-password/:token" element={<ResetPassword />} />
             <Route path="/pizzas" element={<PizzaList />} />
             <Route path="/cart" element={<Cart />} />
+            <Route path="/verify/:token" element={<VerifyEmail />} />
             <Route path="/checkout" element={<PrivateRoute><Checkout /></PrivateRoute>} />
             <Route path="/order-confirmation" element={<PrivateRoute><OrderConfirmation /></PrivateRoute>} />
             <Route path="/orders" element={<PrivateRoute><OrderHistory /></PrivateRoute>} />

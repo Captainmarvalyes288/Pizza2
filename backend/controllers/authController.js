@@ -13,12 +13,21 @@ exports.register = async (req, res) => {
     }
     user = new User({ email, password, role });
     await user.save();
-
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1d' });
     const verificationLink = `${process.env.FRONTEND_URL}/verify/${token}`;
-
-    await sendEmail(user.email, 'Verify Email', `Click this link to verify your email: ${verificationLink}`);
     
+    const htmlContent = `
+      <h1>Verify Your Email</h1>
+      <p>Click <a href="${verificationLink}">here</a> to verify your email.</p>
+    `;
+
+    await sendEmail(
+      user.email, 
+      'Verify Email', 
+      `Click this link to verify your email: ${verificationLink}`,
+      htmlContent
+    );
+   
     res.status(201).json({ msg: 'User registered, please verify your email' });
   } catch (err) {
     console.error(err.message);
@@ -58,13 +67,13 @@ exports.verifyEmail = async (req, res) => {
     const decoded = jwt.verify(req.params.token, process.env.JWT_SECRET);
     const user = await User.findById(decoded.id);
     if (!user) {
-      return res.status(400).send('Invalid token');
+      return res.status(400).json({ msg: 'Invalid token' });
     }
     user.isVerified = true;
     await user.save();
-    res.send('Email verified successfully');
-  } catch (error) {
-    res.status(400).send('Invalid token');
+    res.json({ msg: 'Email verified successfully' });
+  } catch (err) {
+    res.status(400).json({ msg: 'Token is invalid or has expired' });
   }
 };
 
